@@ -14,6 +14,9 @@ var IndexController = function () {
   // Function to be called when the username needs to be updated
   var usernameUpdater;
 
+  // Function to be called when a freet is submitted
+  var newFreetListener;
+
   // Function to be called in order to update the view
   var viewUpdater;
 
@@ -49,6 +52,42 @@ var IndexController = function () {
    */
   that.updateUsername = function() {
     usernameUpdater();
+  }
+
+  /**
+   * Registers a function that will take care of new freets.
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept a Freet as an argument.
+   */
+  that.registerNewFreetListener = function(listener) {
+    newFreetListener = listener;
+  }
+
+  /**
+   * Since we can't attach the freet listener to the input when the DOM is
+   * loaded because it's generated in index.js, we need to attach
+   * it with this function.
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.attachNewFreetListener = function(element_id) {
+    freetInput = $("#" + element_id);
+    freetInput.keypress(function (event) {
+      // Check if Enter (ID 13) was pressed
+      if (event.which === 13) {
+        // Set the username
+        newFreetListener(freetInput.val());
+      }
+    });
+  }
+
+  /**
+   * Saves the freet by calling the registered listener.
+   */
+  that.saveFreet = function() {
+    newFreetListener();
   }
 
   /**

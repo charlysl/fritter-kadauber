@@ -50,6 +50,15 @@ $(document).ready(function() {
       if (res.username) {
         var freetEntry = Handlebars.templates.enter_freet(res);
         $('#starting-point').html(freetEntry);
+
+        // Function to be called when a new freet is created
+        var freetSaver = function(freet) {
+          console.log(freet);
+        }
+
+        indexController.registerNewFreetListener(freetSaver);
+        indexController.attachNewFreetListener("starting-point");
+
       } else {
         var usernamePrompt = Handlebars.templates.prompt_username(res);
         $('#starting-point').html(usernamePrompt);

@@ -1,7 +1,7 @@
 (function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
 templates['enter_freet'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<p>Send a freet.</p>";
+    return "<div class=\"form-group\">\n  <input type=\"text\" class=\"form-control\" id=\"freet-input\" placeholder=\"Freet here!\">\n</div>";
 },"useData":true});
 templates['homepage'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "";
