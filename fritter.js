@@ -32,4 +32,5 @@ app.post('/register', function (req, res) {
     res.json({ success: true, username: req.session.username });
 });
 
-app.listen(3000);
+// app.listen(3000);
+app.listen();
