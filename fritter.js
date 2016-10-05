@@ -1,5 +1,4 @@
-// Running this script with
-// node fritter.js
+// Running "npm start" from this top-level directory
 // will set the app running at hostname:3000
 
 var express = require('express');
@@ -21,7 +20,7 @@ app.get('/username', function (req, res) {
     if (req.session && req.session.username) {
         res.json({ username: req.session.username, username_selector: "username"});
     } else {
-        res.json({ username_selector: "no_username" })
+        res.json({ username_selector: "no_username" });
     }
 });
 
@@ -29,9 +28,7 @@ app.get('/username', function (req, res) {
 app.post('/register', function (req, res) {
     // Store the username
     var body = req.body;
-    console.log("body", body);
     req.session.username = body.username;
-    console.log(req.session);
     res.json({ success: true, username: req.session.username });
 });
 
