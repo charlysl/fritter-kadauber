@@ -8,6 +8,9 @@ $(document).ready(function() {
     var navbar = Handlebars.templates.navbar(res);
     $('body').prepend(navbar);
   });
+
+
+  
 /**
   // On submit button click, create the activity and display it.
   $('#submit-button').click(function() {
