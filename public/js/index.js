@@ -9,18 +9,21 @@ $(document).ready(function() {
 
   // Function to be called when rendering the navbar
   var renderNavbar = function () {
-    $.get('/username', function(res) {
-      var navbar = Handlebars.templates.navbar(res);
+    $.get('/fritter/username', function(res) {
+      console.log(typeof(Handlebars.templates['navbar.hbs']));
+      var navbar = Handlebars.templates['navbar.hbs'](res);
       $('#navbar-content').html(navbar);
 
       // The function to call when a user asks to set their username
       var setUsername = function () {
         // Retrieve the new username from the username setting modal input
         var newUsername = $("#username-input").val();
+        var newPasswordHash = $("#password-input").val();
         // Send a post request to username altering the username stored
         // for the session
-        $.post('/register', {
-            username: newUsername
+        $.post('/fritter/register', {
+            username: newUsername,
+            passwordHash: newPasswordHash
         }, function (res) {
           if (res.success) {
             updateWholePage();
@@ -46,7 +49,7 @@ $(document).ready(function() {
   var renderStartingPoint = function () {
     // Depending on whether the user is logged in, prompt for
     // a freet or ask them to log in.
-    $.get('/username', function(res) {
+    $.get('/fritter/username', function(res) {
       if (res.username) {
         var freetEntry = Handlebars.templates.enter_freet(res);
         $('#starting-point').html(freetEntry);
@@ -60,19 +63,21 @@ $(document).ready(function() {
         indexController.attachNewFreetListener("starting-point");
 
       } else {
-        var usernamePrompt = Handlebars.templates.prompt_username(res);
+        var usernamePrompt = Handlebars.templates['prompt_username.hbs'](res);
         $('#starting-point').html(usernamePrompt);
 
         // Function to be called when the username is entered
         var enterUsername = function () {
           var newUsername = $("#username-prompt-input").val();
-          $.post('/register', {
-            username: newUsername
+          var newPasswordHash = $("#password-prompt-input").val();
+          $.post('/fritter/register', {
+            username: newUsername,
+            passwordHash: newPasswordHash
           }, function (res) {
             if (res.success) {
               updateWholePage();
             }
-          })
+          });
         }
 
         indexController.registerUsernameUpdater(enterUsername);
@@ -92,7 +97,7 @@ $(document).ready(function() {
   // Update the navbar view to match the current state without reloading the page.
   var updateNavbar = function () {
     // Update the username in the navbar
-    $.get('/username', function (res) {
+    $.get('/fritter/username', function (res) {
       indexController.renderNavbar();
     });
   }

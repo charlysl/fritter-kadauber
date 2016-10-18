@@ -160,5 +160,3 @@ var IndexController = function () {
 
   return that;
 }
-
-

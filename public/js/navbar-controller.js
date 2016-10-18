@@ -1,4 +1,3 @@
-
 var NavbarController = function () {
   // Create the object that we will return.
   var that = Object.create(NavbarController.prototype); 
