@@ -16,8 +16,9 @@ mongoose.connect('mongodb://localhost/fritterdb');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
-  console.log("database connected");
+  console.log("database connected to", db.name);
 });
+
 // Get the user database
 var User = require('./models/users');
 

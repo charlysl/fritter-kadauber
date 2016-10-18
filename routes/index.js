@@ -29,18 +29,20 @@ router.post('/register', function (req, res) {
         console.log(err);
         res.json({
           success: false,
-          message: err.message
+          err: err
+        });
+      } else {
+        console.log("record", record);
+        // console.log(record.username);
+        req.session.authenticated = true;
+        req.session.username = record.username;
+        req.session.passwordHash = record.passwordHash;
+        res.json({
+          success: true,
+          username: req.session.username,
+          passwordHash: req.session.passwordHash
         });
       }
-      console.log(record.getUsername());
-      req.session.authenticated = true;
-      req.session.username = record.username;
-      req.session.passwordHash = record.passwordHash;
-      res.json({
-        success: true,
-        username: req.session.username,
-        passwordHash: req.session.passwordHash
-      });
     });
 });
 
