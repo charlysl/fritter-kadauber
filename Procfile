@@ -1,1 +1,1 @@
-web: handlebars templates/* -f public/js/templates.js && node fritter.js
+web: handlebars views/* views/partials/* -f public/js/templates.js && node ./bin/www
