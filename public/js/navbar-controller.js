@@ -14,6 +14,11 @@ var NavbarController = function () {
   // Function to be called in order to update the view
   var viewUpdater;
 
+  // Error messages
+  var errorMessages = [];
+  // Form groups
+  var formGroups = [];
+
   /**
    * Registers a function that will update the view.
    *
@@ -21,7 +26,6 @@ var NavbarController = function () {
    *   must accept no arguments.
    */
   that.registerViewUpdater = function(updater) {
-    console.log("registered navbar view updater");
     viewUpdater = updater;
   }
 
@@ -29,7 +33,6 @@ var NavbarController = function () {
    * Updates the view by calling the registered updater.
    */
   that.updateNavbarView = function() {
-    console.log("called navbar view updater");
     viewUpdater();
   }
 
@@ -40,7 +43,6 @@ var NavbarController = function () {
    *   must accept no arguments.
    */
   that.registerUsernameUpdater = function(updater) {
-    console.log("registered username updater");
     usernameUpdater = updater;
   }
 
@@ -60,7 +62,6 @@ var NavbarController = function () {
    *   listener to
    */
   that.attachUsernameUpdaterListener = function(element_id) {
-    console.log("attaching to", element_id);
     var element = $("#" + element_id);
     if (element.is("input")) {
       element.keypress(function (event) {
@@ -72,6 +73,45 @@ var NavbarController = function () {
     } else if (element.is("button")) {
       element.click(usernameUpdater);
     }
+  }
+
+  /**
+   * Identify an element as an error message and remember it if we don't
+   * already remember it
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.identifyErrorMessage = function(element_id) {
+    if (!errorMessages.includes(element_id)) {
+      errorMessages.push(element_id);
+    }
+  }
+
+  /**
+   * Identify an element as a form group
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.identifyFormGroup = function(element_id) {
+    if (!errorMessages.includes(element_id)) {
+      errorMessages.push(element_id);
+    }
+  }
+
+  /**
+   * Get all the error messages of the page as jQuery objects
+   */
+  that.getErrorMessages = function() {
+    return errorMessages.map(function (element_id) { return $('#' + element_id); });
+  }
+
+  /**
+   * Get all the form groups of the page
+   */
+  that.getFormGroups = function() {
+    return formGroups.map(function (element_id) { return $('#' + element_id); });
   }
 
   // // Grab handles to the HTML nodes when the page loads.

@@ -13,33 +13,32 @@ $(document).ready(function() {
     $("#username-prompt-register-group"), $("#password-prompt-register-group"), $("#password-prompt-check-register-group") // prompt register
   ];
 
-  // Keep track of error message elements
-  var errorMessages = [ $("#invalid-login-message"), // modal login
-    $("#non-unique-user-message"), $("#non-matching-passwords-message"), // modal register
-    $("#invalid-login-prompt-message"), // prompt login
-    $("#non-unique-user-prompt-message"), $("#non-matching-passwords-prompt-message") // prompt register
-  ];
-
   // Function to be called when rendering the navbar
   var renderNavbar = function () {
     $.get('/fritter/username', function(res) {
-      console.log(typeof(Handlebars.templates['navbar.hbs']));
+      // Put the navbar where it belongs
       var navbar = Handlebars.templates['navbar.hbs'](res);
       $('#navbar-content').html(navbar);
 
+      // Identify all the error messages and hide them
+      var navbarErrorMessageIds = ["invalid-login-message", // modal login
+        "non-unique-user-message", "non-matching-passwords-message" // modal register
+      ];
+      navbarErrorMessageIds.forEach(function (navbarErrorMessageId) {
+        navbarController.identifyErrorMessage(navbarErrorMessageId);
+      });
+      hideErrors();
+
       // The function to call when a user asks to set their username
-      var setUsername = function () {
-        console.log("setting username");
+      var submitAccount = function () {
         // Retrieve the new username from the username setting modal input
         var newUsername = $("#username-register-input").val();
         var newPasswordHash = $("#password-register-input").val();
-        // Send a post request to username altering the username stored
-        // for the session
+        // Send a post request to register to register a new account and log in
         $.post('/fritter/register', {
             username: newUsername,
             passwordHash: newPasswordHash
         }, function (res) {
-          console.log("handling response", res.success);
           if (res.success) {
             updateWholePage();
           } else {
@@ -49,13 +48,30 @@ $(document).ready(function() {
         });
       }
 
-      navbarController.registerUsernameUpdater(setUsername);
+      navbarController.registerUsernameUpdater(submitAccount);
 
       navbarController.attachUsernameUpdaterListener("username-register-input");
       navbarController.attachUsernameUpdaterListener("password-register-input");
       navbarController.attachUsernameUpdaterListener("password-check-register-input");
       navbarController.attachUsernameUpdaterListener("register-btn");
+
+
+      // // The function to call when the user tries to log in
+      // var login = function () {
+      //   // Retrieve the username
+      //   var loginUsername = $("#username-input").val();
+      //   var loginPassword = $("#password-input").val();
+      //   // Send a post request to login to log in to the account
+      //   $.post('/fritter/login', {
+      //     username: loginUsername,
+      //     passwordHash: loginPassword
+      //   }, function (res) {
+          
+      //   });
+      // }
+      
     });
+
   }
 
   indexController.registerNavbarRenderer(renderNavbar);
@@ -69,7 +85,7 @@ $(document).ready(function() {
     // a freet or ask them to log in.
     $.get('/fritter/username', function(res) {
       if (res.username) {
-        var freetEntry = Handlebars.templates.enter_freet(res);
+        var freetEntry = Handlebars.templates['enter_freet.hbs'](res);
         $('#starting-point').html(freetEntry);
 
         // Function to be called when a new freet is created
@@ -84,8 +100,17 @@ $(document).ready(function() {
         var usernamePrompt = Handlebars.templates['prompt_username.hbs'](res);
         $('#starting-point').html(usernamePrompt);
 
+        // Keep track of error message elements
+        var indexErrorMessageIds = [ "invalid-login-prompt-message", // prompt login
+          "non-unique-user-prompt-message", "non-matching-passwords-prompt-message" // prompt register
+        ];
+
+        indexErrorMessageIds.forEach(function (errorMessageId) {
+          indexController.identifyErrorMessage(errorMessageId);
+        });
+
         // Function to be called when the username is entered
-        var enterUsername = function () {
+        var submitAccount = function () {
           var newUsername = $("#username-prompt-input").val();
           var newPasswordHash = $("#password-prompt-input").val();
           $.post('/fritter/register', {
@@ -98,13 +123,18 @@ $(document).ready(function() {
           });
         }
 
-        indexController.registerUsernameUpdater(enterUsername);
+        indexController.registerUsernameUpdater(submitAccount);
 
         // Attach the username updater listener to the appropriate input
-        indexController.attachUsernameUpdaterListener("username-prompt-input")
+        indexController.attachUsernameUpdaterListener("username-prompt-input");
+
+        hideErrors();
       }
 
     });
+
+    
+
   }
 
   indexController.registerStartingPointRenderer(renderStartingPoint);
@@ -144,17 +174,24 @@ $(document).ready(function() {
 
   // A helper function for hiding all the errors on the page.
   var hideErrors = function () {
-    // Hide all error messages
-    errorMessages.forEach(function (message) {
+    // Hide all error messages in index
+    indexController.getErrorMessages().forEach(function (message) {
+      message.hide();
+    });
+
+    // Hide all error messages in navbar
+    navbarController.getErrorMessages().forEach(function (message) {
       message.hide();
     });
 
     // Input elements should not look like they have errors
-    inputs.forEach(function (input) {
-      input.removeClass("has-error");
+    indexController.getFormGroups().forEach(function (group) {
+      group.addClass("has-error");
+    });
+    navbarController.getFormGroups().forEach(function (group) {
+      group.addClass("has-error");
     });
   }
-  
 
 });
 

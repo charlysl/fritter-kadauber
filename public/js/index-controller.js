@@ -20,6 +20,11 @@ var IndexController = function () {
   // Function to be called in order to update the view
   var viewUpdater;
 
+  // Error messages
+  var errorMessages = [];
+  // Form groups
+  var formGroups = [];
+
   /**
    * Registers a function that will update the view.
    *
@@ -73,7 +78,7 @@ var IndexController = function () {
    *   listener to
    */
   that.attachNewFreetListener = function(element_id) {
-    freetInput = $("#" + element_id);
+    var freetInput = $("#" + element_id);
     freetInput.keypress(function (event) {
       // Check if Enter (ID 13) was pressed
       if (event.which === 13) {
@@ -81,6 +86,45 @@ var IndexController = function () {
         newFreetListener(freetInput.val());
       }
     });
+  }
+
+  /**
+   * Identify an element as an error message and remember it if we don't
+   * already remember it
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.identifyErrorMessage = function(element_id) {
+    if (!errorMessages.includes(element_id)) {
+      errorMessages.push(element_id);
+    }
+  }
+
+  /**
+   * Identify an element as a form group
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.identifyFormGroup = function(element_id) {
+    if (!errorMessages.includes(element_id)) {
+      errorMessages.push(element_id);
+    }
+  }
+
+  /**
+   * Get all the error messages of the page
+   */
+  that.getErrorMessages = function() {
+    return errorMessages.map(function (element_id) { return $('#' + element_id); });
+  }
+
+  /**
+   * Get all the form groups of the page
+   */
+  that.getFormGroups = function() {
+    return formGroups.map(function (element_id) { return $('#' + element_id); });
   }
 
   /**
