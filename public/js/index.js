@@ -138,6 +138,7 @@ $(document).ready(function() {
     // a freet or ask them to log in.
     $.get('/fritter/username', function(res) {
       if (res.username) {
+        // If a user is logged in, let them freet
         var freetEntry = Handlebars.templates['enter_freet.hbs'](res);
         $('#starting-point').html(freetEntry);
 
@@ -150,6 +151,8 @@ $(document).ready(function() {
         indexController.attachNewFreetListener("starting-point");
 
       } else {
+
+        // Otherwise, prompt them to log in
         var usernamePrompt = Handlebars.templates['prompt_username.hbs'](res);
         $('#starting-point').html(usernamePrompt);
 
@@ -205,6 +208,37 @@ $(document).ready(function() {
         indexController.attachUsernameUpdaterListener("password-prompt-register-input");
         indexController.attachUsernameUpdaterListener("password-prompt-check-register-input");
         indexController.attachUsernameUpdaterListener("register-prompt-btn");
+
+        // The function to call when the user tries to log in
+        var login = function () {
+          // Retrieve the username
+          var loginUsername = $("#username-login-prompt-input").val();
+          var loginPassword = $("#password-login-prompt-input").val();
+          // Send a post request to login to log in to the account
+          $.post('/fritter/login', {
+            username: loginUsername,
+            passwordHash: loginPassword
+          }, function (res) {
+            console.log("response received");
+            if (res.success) {
+              updateWholePage();
+            } else {
+              $("#username-login-prompt-group").addClass("has-error");
+              $("#password-login-prompt-group").addClass("has-error");
+              if (res.err.name === "BadCredentials") {
+                $("#invalid-login-prompt-message").show();
+              } else {
+                $("#login-error-prompt-message").show();
+              }
+            }
+          });
+        }
+
+        indexController.registerLoginListener(login);
+
+        indexController.attachLoginListener("username-login-prompt-input");
+        indexController.attachLoginListener("password-login-prompt-input");
+        indexController.attachLoginListener("login-prompt-btn");
 
       }
 
