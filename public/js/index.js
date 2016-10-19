@@ -137,16 +137,33 @@ $(document).ready(function() {
         });
         hideErrors();
 
+        var indexInputIds = [ "username-login-prompt-input", "password-login-prompt-input", "login-prompt-btn", // modal login
+          "username-prompt-register-input", "password-prompt-register-input", "password-prompt-check-register-input", "register-prompt-btn" ] // modal register
+
+        // Allow format resets on input boxes
+        var resetInputFormat = function () {
+          indexController.getErrorMessages().forEach(function (errorMessage) { errorMessage.hide(); });
+          indexController.getFormGroups().forEach(function (formGroup) { formGroup.removeClass("has-error"); });
+        }
+        indexController.registerInputFormatResetter(resetInputFormat);
+        
+        indexInputIds.forEach(function (indexInputId) { 
+          indexController.attachInputFormatResetterListener(indexInputId); 
+        });
+
         // Function to be called when the username is entered
         var submitAccount = function () {
-          var newUsername = $("#username-prompt-input").val();
-          var newPasswordHash = $("#password-prompt-input").val();
+          var newUsername = $("#username-prompt-register-input").val();
+          var newPasswordHash = $("#password-prompt-register-input").val();
           $.post('/fritter/register', {
             username: newUsername,
             passwordHash: newPasswordHash
           }, function (res) {
             if (res.success) {
               updateWholePage();
+            } else {
+              $("#username-prompt-register-group").addClass("has-error");
+              $("#non-unique-user-prompt-message").show();
             }
           });
         }
@@ -154,9 +171,11 @@ $(document).ready(function() {
         indexController.registerUsernameUpdater(submitAccount);
 
         // Attach the username updater listener to the appropriate input
-        indexController.attachUsernameUpdaterListener("username-prompt-input");
+        indexController.attachUsernameUpdaterListener("username-prompt-register-input");
+        indexController.attachUsernameUpdaterListener("password-prompt-register-input");
+        indexController.attachUsernameUpdaterListener("password-prompt-check-register-input");
+        indexController.attachUsernameUpdaterListener("register-prompt-btn");
 
-        hideErrors();
       }
 
     });
@@ -209,16 +228,15 @@ $(document).ready(function() {
 
     // Hide all error messages in navbar
     navbarController.getErrorMessages().forEach(function (message) {
-      console.log(message.attr('id'));
       message.hide();
     });
 
     // Input elements should not look like they have errors
     indexController.getFormGroups().forEach(function (group) {
-      group.addClass("has-error");
+      group.removeClass("has-error");
     });
     navbarController.getFormGroups().forEach(function (group) {
-      group.addClass("has-error");
+      group.removeClass("has-error");
     });
   }
 

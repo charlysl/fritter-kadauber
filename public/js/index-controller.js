@@ -11,6 +11,9 @@ var IndexController = function () {
   // Input field to prompt for username
   var usernamePromptInput;
 
+  // Function to be called when input formatting needs to be reset
+  var inputFormatResetter;
+
   // Function to be called when the username needs to be updated
   var usernameUpdater;
 
@@ -24,6 +27,40 @@ var IndexController = function () {
   var errorMessages = [];
   // Form groups
   var formGroups = [];
+
+  /**
+   * Registers a function that will reset the input boxes' format
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept no arguments.
+   */
+  that.registerInputFormatResetter = function(resetter) {
+    inputFormatResetter = resetter;
+  }
+
+  /**
+   * Resets the input boxes' format by calling the registered resetter.
+   */
+  that.resetInputFormat = function() {
+    inputFormatResetter();
+  }
+
+  /**
+   * Attach input formatter to when some input or button element is typed in
+   * or clicked on.
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.attachInputFormatResetterListener = function(element_id) {
+    var element = $("#" + element_id);
+    if (element.is("input")) {
+      element.click(inputFormatResetter);
+      element.keypress(inputFormatResetter);
+    } else if (element.is("button")) {
+      element.click(inputFormatResetter);
+    }
+  }
 
   /**
    * Registers a function that will update the view.
