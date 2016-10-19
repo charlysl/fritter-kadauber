@@ -10,6 +10,10 @@ var util = require('./util/util');
 
 var app = express();
 
+// Parse request bodies
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // Connect to database
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/fritterdb');
@@ -32,22 +36,19 @@ console.log("registered partials");
 
 // Express looks up files relative to the static directory
 app.use(express.static('public'));
-// Parse request bodies
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 // Ensure session usage with middleware
 app.use(session({ secret: 'notsosecret', resave: true, saveUninitialized: true }));
+
+// Use the appropriate routes
+var fritterRoutes = require('./routes/index');
+app.use('/fritter', fritterRoutes);
 
 // Send basic request to fritter
 app.get('/', function (req, res) {
     console.log("redirecting to fritter");
     res.redirect('fritter');
 });
-
-// Use the appropriate routes
-var fritterRoutes = require('./routes/index');
-app.use('/fritter', fritterRoutes);
 
 // Ensure authentication with middleware
 app.use(function (req, res, next) {
@@ -63,7 +64,7 @@ app.use(function (req, res, next) {
                 // as the purported user's password hash
                 if (storedHash == user.passwordHash) {
                     res.json({ username: req.session.username, username_selector: "username.hbs"});
-                    next();
+                    // next();
                 } else {
                     // If it's not, de-authenticate the user and send them back to the homepage
                     req.session.authenticated = false;
@@ -73,7 +74,6 @@ app.use(function (req, res, next) {
         });
     } else {
         res.json({ username_selector: "no_username.hbs" });
-        next();
     }
 });
 
@@ -93,7 +93,6 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
-    console.log("handling error");
     res.status(err.status || 500);
     res.json({
       'message': err.message,
