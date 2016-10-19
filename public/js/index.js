@@ -245,9 +245,9 @@ $(document).ready(function() {
       }
 
       // Display the appropriate freets
-      // var freetHtml = Handlebars.templates['freet_container.hbs']({});
-      // $("#freet-container").html(freetHtml);
-      // console.log("displaying freets");
+      var freetHtml = Handlebars.templates['freet_container.hbs']({});
+      $("#freet-container").html(freetHtml);
+      console.log("displaying freets");
 
 
     });
