@@ -15,7 +15,7 @@ $(document).ready(function() {
       $('#navbar-content').html(navbar);
 
       // Identify all the error messages and hide them
-      var navbarErrorMessageIds = ["invalid-login-message", "login-error-message", "already-logged-in-message", // modal login
+      var navbarErrorMessageIds = ["invalid-login-message", "login-error-message", "already-logged-in-message", "user-not-found-message", // modal login
         "non-unique-user-message", "non-matching-passwords-message" // modal register
       ];
       navbarErrorMessageIds.forEach(function (navbarErrorMessageId) {
@@ -91,6 +91,8 @@ $(document).ready(function() {
             $("#password-group").addClass("has-error");
             if (res.err.name === "BadCredentials") {
               $("#invalid-login-message").show();
+            } else if (res.err.name === "UserNotFound") {
+              $("#user-not-found-message").show();
             } else {
               $("#login-error-message").show();
             }
@@ -151,7 +153,7 @@ $(document).ready(function() {
         $('#starting-point').html(usernamePrompt);
 
         // Find error message elements and hide them
-        var indexErrorMessageIds = [ "invalid-login-prompt-message", "login-error-prompt-message", // prompt login
+        var indexErrorMessageIds = [ "invalid-login-prompt-message", "login-error-prompt-message", "user-not-found-prompt-message", // prompt login
           "non-unique-user-prompt-message", "non-matching-passwords-prompt-message" // prompt register
         ];
         indexErrorMessageIds.forEach(function (errorMessageId) {
@@ -228,6 +230,8 @@ $(document).ready(function() {
               $("#password-login-prompt-group").addClass("has-error");
               if (res.err.name === "BadCredentials") {
                 $("#invalid-login-prompt-message").show();
+              } else if (res.err.name === "UserNotFound") {
+                $("#user-not-found-prompt-message").show();
               } else {
                 $("#login-error-prompt-message").show();
               }

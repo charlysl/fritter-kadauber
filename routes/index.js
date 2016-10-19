@@ -81,11 +81,20 @@ router.post('/login', function (req, res) {
       function (err, record) {
       console.log("finding user");
       console.log(record);
-      if (err || record === null) { // can't find the username
+      if (err) { // error looking for username
         console.log(err);
         res.json({
           success: false,
           err: err
+        });
+      } else if (record === null) {
+        console.log("username not in database");
+        res.json({
+          success: false,
+          err: {
+            name: "UserNotFound",
+            message: "Username not found in database"
+          }
         });
       } else {
         var correctPasswordHash = record.passwordHash;
