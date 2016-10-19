@@ -20,10 +20,34 @@ var NavbarController = function () {
   // Function to be called when the user logs in
   var loginListener;
 
+  // Function to be called when the user logs out
+  var logoutListener;
+
   // Error messages
   var errorMessages = [];
   // Form groups
   var formGroups = [];
+
+  /**
+   * Registers a function that will be called when the user tries to log in
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept no arguments.
+   */
+  that.registerLogoutListener = function(listener) {
+    logoutListener = listener;
+  }
+
+  /**
+   * Attach a login listener to an element that should trigger a login attempt
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.attachLogoutListener = function(element_id) {
+    var element = $("#" + element_id);
+    element.click(logoutListener);
+  }
 
   /**
    * Registers a function that will be called when the user tries to log in

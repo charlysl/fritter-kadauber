@@ -4,7 +4,7 @@ var Users = require('../models/users');
 
 // Render the homepage
 router.get('/', function (req, res, next) {
-  console.log("rendering homepage");
+  console.log("rendering homepage from", req.url);
   res.render('homepage.hbs');
 });
 
@@ -24,11 +24,14 @@ router.get('/username', function (req, res) {
 // Register a new user account
 router.post('/register', function (req, res) {
   console.log("registering new user");
+  console.log("req url", req.url);
+  console.log(req.body);
   // Store the new user
   var user = req.body;
-  Users.create({ username: user.username, 
+  Users.create({ username: user.username,
                 passwordHash: user.passwordHash }, 
     function (err, record) { 
+      console.log("creating record");
       if (err) {
         console.log(err);
         res.json({
@@ -54,6 +57,7 @@ router.post('/login', function (req, res) {
   console.log("received login request");
   console.log("request", req.body);
   var data = req.body;
+  console.log("session info", req.session);
   // Check that the user isn't logged in
   if (req.session.authenticated) {
     console.log("user already logged in");
@@ -71,25 +75,27 @@ router.post('/login', function (req, res) {
     Users.findOne({ username: data.username }, 
       function (err, record) {
       console.log("finding user");
+      console.log(record);
       if (err) { // can't find the username
         console.log(err);
-        res.set({
+        res.json({
           success: false,
           err: err
         });
       } else {
         var correctPasswordHash = record.passwordHash;
         if (data.passwordHash === correctPasswordHash) {
+          console.log("password was good");
           req.session.authenticated = true;
           req.session.username = record.username;
           req.session.passwordHash = record.passwordHash;
-          res.set({
+          res.json({
             success: true,
             username: req.session.username,
             passwordHash: req.session.passwordHash
           });
         } else {
-          res.set({
+          res.json({
             success: false,
             err: {
               name: "BadCredentials",
@@ -99,8 +105,18 @@ router.post('/login', function (req, res) {
         }
       }
     });
-    
   }
-})
+});
+
+// Log a user out
+router.post('/logout', function (req, res) {
+  console.log("logging out");
+  req.session.authenticated = false;
+  req.session.username = "";
+  req.session.passwordHash = "";
+  res.json({
+    success: true
+  });
+});
 
 module.exports = router;

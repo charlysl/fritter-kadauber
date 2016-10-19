@@ -16,12 +16,13 @@
             <h3>Login</h3>
             <div class="form-group" id="username-group">
               <label for="newUsername">Username</label>
-              <input type="text" class="form-control" id="username-input" placeholder="Enter your new username">
+              <input type="text" class="form-control" id="username-input">
             </div>
             <div class="form-group" id="password-group">
               <label for="newPassword">Password</label>
-              <input type="password" class="form-control" id="password-input" placeholder="Enter your new password">
+              <input type="password" class="form-control" id="password-input">
               <span class="help-block" id="invalid-login-message">Username and password do not match.</span>
+              <span class="help-block" id="already-logged-in-message">You're already logged in.</span>
               <span class="help-block" id="login-error-message">Something went wrong with your login. Try again.</span>
             </div>
             <button type="submit" class="btn btn-default" id="login-btn">Login</button>
