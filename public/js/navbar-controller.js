@@ -17,10 +17,44 @@ var NavbarController = function () {
   // Function to be called in order to update the view
   var viewUpdater;
 
+  // Function to be called when the user logs in
+  var loginListener;
+
   // Error messages
   var errorMessages = [];
   // Form groups
   var formGroups = [];
+
+  /**
+   * Registers a function that will be called when the user tries to log in
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept no arguments.
+   */
+  that.registerLoginListener = function(listener) {
+    loginListener = listener;
+  }
+
+  /**
+   * Attach a login listener to an element that should trigger a login attempt
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.attachLoginListener = function(element_id) {
+    var element = $("#" + element_id);
+    if (element.is("input")) {
+      element.keypress(function (event) {
+        // If the user hit enter (id 13)
+        if (event.which === 13) {
+          // Log the user in
+          loginListener();
+        }
+      });
+    } else if (element.is("button")) {
+      element.click(loginListener);
+    }
+  }
 
   /**
    * Registers a function that will reset the input boxes' format
@@ -106,7 +140,7 @@ var NavbarController = function () {
           // Set the username
           usernameUpdater();
         }
-      })
+      });
     } else if (element.is("button")) {
       element.click(usernameUpdater);
     }

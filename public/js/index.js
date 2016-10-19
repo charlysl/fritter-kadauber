@@ -21,7 +21,7 @@ $(document).ready(function() {
       $('#navbar-content').html(navbar);
 
       // Identify all the error messages and hide them
-      var navbarErrorMessageIds = ["invalid-login-message", // modal login
+      var navbarErrorMessageIds = ["invalid-login-message", "login-error-message", // modal login
         "non-unique-user-message", "non-matching-passwords-message" // modal register
       ];
       navbarErrorMessageIds.forEach(function (navbarErrorMessageId) {
@@ -79,20 +79,36 @@ $(document).ready(function() {
       navbarController.attachUsernameUpdaterListener("register-btn");
 
 
-      // // The function to call when the user tries to log in
-      // var login = function () {
-      //   // Retrieve the username
-      //   var loginUsername = $("#username-input").val();
-      //   var loginPassword = $("#password-input").val();
-      //   // Send a post request to login to log in to the account
-      //   $.post('/fritter/login', {
-      //     username: loginUsername,
-      //     passwordHash: loginPassword
-      //   }, function (res) {
+      // The function to call when the user tries to log in
+      var login = function () {
+        // Retrieve the username
+        var loginUsername = $("#username-input").val();
+        var loginPassword = $("#password-input").val();
+        // Send a post request to login to log in to the account
+        $.post('/fritter/login', {
+          username: loginUsername,
+          passwordHash: loginPassword
+        }, function (res) {
+          console.log("response received");
+          if (res.success) {
+            updateWholePage();
+          } else {
+            $("#password-login-group").addClass("has-error");
+            if (res.err.name === "BadCredentials") {
+              $("#invalid-login-message").show();
+            } else {
+              $("#login-error-message").show();
+            }
+          }
+        });
+      }
 
-      //   });
-      // }
-      
+      navbarController.registerLoginListener(login);
+
+      navbarController.attachLoginListener("username-input");
+      navbarController.attachLoginListener("password-input");
+      navbarController.attachLoginListener("login-btn");
+
     });
 
   }
