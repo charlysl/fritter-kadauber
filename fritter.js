@@ -16,7 +16,8 @@ app.use(bodyParser.json());
 
 // Connect to database
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/fritterdb');
+// mongoose.connect('mongodb://localhost/fritterdb');
+mongoose.connect(process.env.MONGODB_URI + '/fritterdb');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
