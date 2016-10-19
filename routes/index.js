@@ -81,35 +81,33 @@ router.post('/login', function (req, res) {
       function (err, record) {
       console.log("finding user");
       console.log(record);
-      if (err) { // can't find the username
+      if (err || record === null) { // can't find the username
         console.log(err);
         res.json({
           success: false,
           err: err
         });
       } else {
-        if (record.passwordHash) {
-          var correctPasswordHash = record.passwordHash;
-          if (data.passwordHash === correctPasswordHash) {
-            console.log("password was good");
-            req.session.authenticated = true;
-            req.session.username = record.username;
-            req.session.passwordHash = record.passwordHash;
-            console.log("session info:", req.session);
-            res.json({
-              success: true,
-              username: req.session.username,
-              passwordHash: req.session.passwordHash
-            });
-          } else {
-            res.json({
-              success: false,
-              err: {
-                name: "BadCredentials",
-                message: "Username and password do not match"
-              }
-            });
-          }
+        var correctPasswordHash = record.passwordHash;
+        if (data.passwordHash === correctPasswordHash) {
+          console.log("password was good");
+          req.session.authenticated = true;
+          req.session.username = record.username;
+          req.session.passwordHash = record.passwordHash;
+          console.log("session info:", req.session);
+          res.json({
+            success: true,
+            username: req.session.username,
+            passwordHash: req.session.passwordHash
+          });
+        } else {
+          res.json({
+            success: false,
+            err: {
+              name: "BadCredentials",
+              message: "Username and password do not match"
+            }
+          });
         }
       }
     });
