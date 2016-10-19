@@ -4,7 +4,7 @@ var Users = require('../models/users');
 
 // Render the homepage
 router.get('/', function (req, res, next) {
-  console.log("rendering homepage from", req.url);
+  console.log("rendering homepage from", req.referrer);
   res.render('homepage.hbs');
 });
 
@@ -89,6 +89,7 @@ router.post('/login', function (req, res) {
           req.session.authenticated = true;
           req.session.username = record.username;
           req.session.passwordHash = record.passwordHash;
+          console.log("session info:", req.session);
           res.json({
             success: true,
             username: req.session.username,

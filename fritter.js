@@ -52,6 +52,7 @@ app.get('/', function (req, res) {
 
 // Ensure authentication with middleware
 app.use(function (req, res, next) {
+  console.log("ensuring authentication");
     // If the user claims to be authenticated, check that they really are
     if (req.session.authenticated) {
         console.log("claims to be authenticated");

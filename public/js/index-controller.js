@@ -137,22 +137,7 @@ var IndexController = function () {
     viewUpdater();
   }
 
-  /**
-   * Registers a function that will update the username.
-   *
-   * @param {Function} listener - The function to be called. Function
-   *   must accept no arguments.
-   */
-  that.registerUsernameUpdater = function(updater) {
-    usernameUpdater = updater;
-  }
 
-  /**
-   * Updates the username by calling the registered updater.
-   */
-  that.updateUsername = function() {
-    usernameUpdater();
-  }
 
   /**
    * Registers a function that will take care of new freets.
@@ -264,6 +249,23 @@ var IndexController = function () {
   }
 
   /**
+   * Registers a function that will update the username.
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept no arguments.
+   */
+  that.registerUsernameUpdater = function(updater) {
+    usernameUpdater = updater;
+  }
+
+  /**
+   * Updates the username by calling the registered updater.
+   */
+  that.updateUsername = function() {
+    usernameUpdater();
+  }
+
+  /**
    * Since we can't attach the username updater listener to the input when the DOM is
    * loaded because it's generated in index.js, we need to attach
    * it with this function.
@@ -272,14 +274,17 @@ var IndexController = function () {
    *   listener to
    */
   that.attachUsernameUpdaterListener = function(element_id) {
-    usernamePromptInput = $("#" + element_id);
-    usernamePromptInput.keypress(function (event) {
-      // Check if Enter (ID 13) was pressed
-      if (event.which === 13) {
-        // Set the username
-        usernameUpdater();
-      }
-    });
+    element = $("#" + element_id);
+    if (element.is("input")) {
+      element.keypress(function (event) {
+        if (event.which === 13) {
+          // Set the username
+          usernameUpdater();
+        }
+      });
+    } else if (element.is("button")) {
+      element.click(usernameUpdater);
+    }
   }
 
   // Grab handles to the HTML nodes when the page loads and

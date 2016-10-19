@@ -6,12 +6,6 @@ $(document).ready(function() {
 
   var navbarController = NavbarController();
 
-  // Keep track of form group elements
-  var formGroups = [ $("#username-group"), $("#password-group"), // modal login
-    $("#username-register-group"), $("#password-register-group"), $("#password-check-register-group"), // modal register
-    $("#username-prompt-group"), $("#password-prompt-group"), // prompt login
-    $("#username-prompt-register-group"), $("#password-prompt-register-group"), $("#password-prompt-check-register-group") // prompt register
-  ];
 
   // Function to be called when rendering the navbar
   var renderNavbar = function () {
@@ -157,7 +151,7 @@ $(document).ready(function() {
         $('#starting-point').html(usernamePrompt);
 
         // Find error message elements and hide them
-        var indexErrorMessageIds = [ "invalid-login-prompt-message", // prompt login
+        var indexErrorMessageIds = [ "invalid-login-prompt-message", "login-error-prompt-message", // prompt login
           "non-unique-user-prompt-message", "non-matching-passwords-prompt-message" // prompt register
         ];
         indexErrorMessageIds.forEach(function (errorMessageId) {
@@ -186,19 +180,25 @@ $(document).ready(function() {
 
         // Function to be called when the username is entered
         var submitAccount = function () {
+          console.log("submitting account");
           var newUsername = $("#username-prompt-register-input").val();
           var newPasswordHash = $("#password-prompt-register-input").val();
           $.post('/fritter/register', {
             username: newUsername,
             passwordHash: newPasswordHash
           }, function (res) {
+            console.log("got response", res);
             if (res.success) {
               updateWholePage();
             } else {
+              console.log("not updating page...");
               $("#username-prompt-register-group").addClass("has-error");
               $("#non-unique-user-prompt-message").show();
             }
+            console.log("done submitting account");
           });
+
+
         }
 
         indexController.registerUsernameUpdater(submitAccount);
@@ -211,6 +211,7 @@ $(document).ready(function() {
 
         // The function to call when the user tries to log in
         var login = function () {
+
           // Retrieve the username
           var loginUsername = $("#username-login-prompt-input").val();
           var loginPassword = $("#password-login-prompt-input").val();
@@ -219,7 +220,7 @@ $(document).ready(function() {
             username: loginUsername,
             passwordHash: loginPassword
           }, function (res) {
-            console.log("response received");
+            // console.log("response received", res);
             if (res.success) {
               updateWholePage();
             } else {
@@ -232,6 +233,7 @@ $(document).ready(function() {
               }
             }
           });
+
         }
 
         indexController.registerLoginListener(login);
@@ -241,6 +243,12 @@ $(document).ready(function() {
         indexController.attachLoginListener("login-prompt-btn");
 
       }
+
+      // Display the appropriate freets
+      // var freetHtml = Handlebars.templates['freet_container.hbs']({});
+      // $("#freet-container").html(freetHtml);
+      // console.log("displaying freets");
+
 
     });
 
