@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 // Connect to database
 var mongoose = require('mongoose');
 // mongoose.connect('mongodb://localhost/fritterdb');
-mongoose.connect(process.env.MONGODB_URI + '/fritterdb');
+mongoose.connect("mongodb://heroku_qmzntzh9:ad39knfnihv5957i7a9ta602o0@ds049925.mlab.com:49925/heroku_qmzntzh9");
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
