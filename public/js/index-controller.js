@@ -108,8 +108,8 @@ var IndexController = function () {
    *   listener to
    */
   that.identifyFormGroup = function(element_id) {
-    if (!errorMessages.includes(element_id)) {
-      errorMessages.push(element_id);
+    if (!formGroups.includes(element_id)) {
+      formGroups.push(element_id);
     }
   }
 

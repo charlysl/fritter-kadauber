@@ -130,6 +130,12 @@ $(document).ready(function() {
         indexErrorMessageIds.forEach(function (errorMessageId) {
           indexController.identifyErrorMessage(errorMessageId);
         });
+        var indexFormGroupIds = [ "username-login-prompt-group", "password-login-prompt-group", // prompt login
+          "username-prompt-register-group", "password-prompt-register-group", "password-prompt-check-register-group" ];// prompt register
+        indexFormGroupIds.forEach(function (formGroupId) {
+          indexController.identifyFormGroup(formGroupId);
+        });
+        hideErrors();
 
         // Function to be called when the username is entered
         var submitAccount = function () {
