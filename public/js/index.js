@@ -27,7 +27,30 @@ $(document).ready(function() {
       navbarErrorMessageIds.forEach(function (navbarErrorMessageId) {
         navbarController.identifyErrorMessage(navbarErrorMessageId);
       });
+
+      var navbarFormGroupIds = [ "username-group", "password-group", // modal login
+        "username-register-group", "password-register-group", "password-check-register-group" // modal register
+      ]
+      navbarFormGroupIds.forEach(function (navbarFormGroupId) {
+        navbarController.identifyFormGroup(navbarFormGroupId);
+      });
       hideErrors();
+
+
+      var navbarInputIds = [ "username-input", "password-input", "login-btn", // modal login
+        "username-register-input", "password-register-input", "password-check-register-input", "register-btn" ] // modal register
+
+      // Allow format resets on input boxes
+      var resetInputFormat = function () {
+        navbarController.getErrorMessages().forEach(function (errorMessage) { errorMessage.hide(); });
+        navbarController.getFormGroups().forEach(function (formGroup) { formGroup.removeClass("has-error"); });
+      }
+      navbarController.registerInputFormatResetter(resetInputFormat);
+      
+      navbarInputIds.forEach(function (navbarInputId) { 
+        navbarController.attachInputFormatResetterListener(navbarInputId); 
+      });
+
 
       // The function to call when a user asks to set their username
       var submitAccount = function () {
@@ -66,7 +89,7 @@ $(document).ready(function() {
       //     username: loginUsername,
       //     passwordHash: loginPassword
       //   }, function (res) {
-          
+
       //   });
       // }
       
@@ -100,11 +123,10 @@ $(document).ready(function() {
         var usernamePrompt = Handlebars.templates['prompt_username.hbs'](res);
         $('#starting-point').html(usernamePrompt);
 
-        // Keep track of error message elements
+        // Find error message elements and hide them
         var indexErrorMessageIds = [ "invalid-login-prompt-message", // prompt login
           "non-unique-user-prompt-message", "non-matching-passwords-prompt-message" // prompt register
         ];
-
         indexErrorMessageIds.forEach(function (errorMessageId) {
           indexController.identifyErrorMessage(errorMessageId);
         });
@@ -181,6 +203,7 @@ $(document).ready(function() {
 
     // Hide all error messages in navbar
     navbarController.getErrorMessages().forEach(function (message) {
+      console.log(message.attr('id'));
       message.hide();
     });
 

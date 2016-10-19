@@ -2,14 +2,17 @@ var NavbarController = function () {
   // Create the object that we will return.
   var that = Object.create(NavbarController.prototype); 
 
-  // Button to use to set username
-  var usernameSetButton;
+  // // Button to use to set username
+  // var usernameSetButton;
 
-  // Input field to set username
-  var usernameSetInput;
+  // // Input field to set username
+  // var usernameSetInput;
 
-  // Function to be called when the username needs to be updated
+  // Function to be called when an account needs to be registered
   var usernameUpdater;
+
+  // Function to be called when input formatting needs to be reset
+  var inputFormatResetter;
 
   // Function to be called in order to update the view
   var viewUpdater;
@@ -18,6 +21,40 @@ var NavbarController = function () {
   var errorMessages = [];
   // Form groups
   var formGroups = [];
+
+  /**
+   * Registers a function that will reset the input boxes' format
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept no arguments.
+   */
+  that.registerInputFormatResetter = function(resetter) {
+    inputFormatResetter = resetter;
+  }
+
+  /**
+   * Resets the input boxes' format by calling the registered resetter.
+   */
+  that.resetInputFormat = function() {
+    inputFormatResetter();
+  }
+
+  /**
+   * Attach input formatter to when some input or button element is typed in
+   * or clicked on.
+   * 
+   * @param {string} element_id - the ID of the element to attach the
+   *   listener to
+   */
+  that.attachInputFormatResetterListener = function(element_id) {
+    var element = $("#" + element_id);
+    if (element.is("input")) {
+      element.click(inputFormatResetter);
+      element.keypress(inputFormatResetter);
+    } else if (element.is("button")) {
+      element.click(inputFormatResetter);
+    }
+  }
 
   /**
    * Registers a function that will update the view.
@@ -95,8 +132,8 @@ var NavbarController = function () {
    *   listener to
    */
   that.identifyFormGroup = function(element_id) {
-    if (!errorMessages.includes(element_id)) {
-      errorMessages.push(element_id);
+    if (!formGroups.includes(element_id)) {
+      formGroups.push(element_id);
     }
   }
 
