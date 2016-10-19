@@ -9,6 +9,10 @@ router.get('/', function (req, res, next) {
   res.render('homepage.hbs');
 });
 
+router.get('/favicon.ico', function (req, res, next) {
+  next();
+});
+
 // If there is a username, have the navbar display the username
 // Otherwise, have it display the username selector
 router.get('/username', function (req, res) {
