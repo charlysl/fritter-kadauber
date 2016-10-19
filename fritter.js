@@ -36,13 +36,16 @@ console.log("registered partials");
 
 // Express looks up files relative to the static directory
 app.use(express.static('public'));
+console.log("set static resources directory");
 
 // Ensure session usage with middleware
 app.use(session({ secret: 'notsosecret', resave: true, saveUninitialized: true }));
+console.log("use session plugin");
 
 // Use the appropriate routes
 var fritterRoutes = require('./routes/index');
 app.use('/fritter', fritterRoutes);
+console.log("use fritter routes");
 
 // Send basic request to fritter
 app.get('/', function (req, res) {
@@ -55,7 +58,6 @@ app.use(function (req, res, next) {
   console.log("ensuring authentication");
     // If the user claims to be authenticated, check that they really are
     if (req.session.authenticated) {
-        console.log("claims to be authenticated");
         var storedHash = req.session.passwordHash;
         User.findOne({ username: req.session.username }, function (err, user) {
             if (err) {
@@ -102,14 +104,14 @@ if (app.get('env') === 'development') {
   });
 }
 
-// // production error handler
-// // no stacktraces leaked to user
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500);
-//   res.json({
-//     'error': err.message
-//   });
-// });
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({
+    'error': err.message
+  });
+});
 
 
 module.exports = app;

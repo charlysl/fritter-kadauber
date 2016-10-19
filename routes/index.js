@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Users = require('../models/users');
+var Freets = require('../models/freets');
 
 // Render the homepage
 router.get('/', function (req, res, next) {
@@ -117,6 +118,29 @@ router.post('/logout', function (req, res) {
   req.session.passwordHash = "";
   res.json({
     success: true
+  });
+});
+
+router.post('/write-freet', function (req, res) {
+  console.log("writing freet");
+  var freetData = req.body;
+  Freets.create( {
+    author: freetData.authorId,
+    content: {
+      isRefreet: freetData.isRefreet,
+      refreetId: freetData.refreetId,
+      text: freetData.text
+    }
+  }, function (err, record) {
+    if (err) {
+      console.log(err);
+      res.json({
+        success: false,
+        err: err
+      });
+    } else {
+      res.json({ success: true });
+    }
   });
 });
 
