@@ -155,6 +155,15 @@ router.get('/get-all-freets', function (req, res) {
   
   Freets.find().populate({ path: 'author' }).exec(function (err, freets) {
     console.log("populated");
+    freets.forEach(function (freet) {
+      console.log("id", freet._id, "user", freet.author.username);
+    });
+    // var formattedFreets = freets.map(function (freet) {
+    //   return {
+    //     _id: freet._id,
+    //     author: freet.
+    //   }
+    // })
     res.json({ freets: [ {_id: 1, author: "me", isRefreet: false, content: "hello" } ] });
   });
   // Freets.populate({ path: 'author' });
