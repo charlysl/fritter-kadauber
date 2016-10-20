@@ -154,6 +154,7 @@ router.get('/get-all-freets', function (req, res) {
   console.log("getting all freets");
   
   Freets.find().populate({ path: 'author' }).exec(function (err, freets) {
+    console.log("populated");
     res.json({ freets: [ {_id: 1, author: "me", isRefreet: false, content: "hello" } ] });
   });
   // Freets.populate({ path: 'author' });
