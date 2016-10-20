@@ -154,7 +154,7 @@ router.get('/get-all-freets', function (req, res) {
   console.log("getting all freets");
   Freets.populate({ path: 'author' });
   Freets.find().exec(function (err, freets) {
-    Freets.populate(freets, {path: 'author'}, function (err, result) {
+    Freets.populate(freets, {path: 'author', model: Users}, function (err, result) {
       console.log("populated");
       res.json({ freets: freets.map(formatFreets)})
     })
