@@ -154,8 +154,9 @@ router.get('/get-all-freets', function (req, res) {
   console.log("getting all freets");
 
   Freets.find().exec(function (err, freets) {
+    console.log("unpopulated first", freets[0]);
     Freets.populate(freets, {path: 'author'}, function (err, result) {
-      console.log("populated", result);
+      console.log("populated first", result[0]);
     });
     // var formattedFreets = freets.map(function (freet) {
     //   return {
