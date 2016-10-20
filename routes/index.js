@@ -152,7 +152,10 @@ router.post('/write-freet', function (req, res) {
 
 router.get('/get-all-freets', function (req, res) {
   console.log("getting all freets");
-  res.json({ freets: [ {_id: 1, author: "me", isRefreet: false, content: "hello" } ] });
+  
+  Freets.find().populate({ path: 'author' }).exec(function (err, freets) {
+    res.json({ freets: [ {_id: 1, author: "me", isRefreet: false, content: "hello" } ] });
+  });
   // Freets.populate({ path: 'author' });
   // Freets.find().exec(function (err, freets) {
   //   Freets.populate(freets, {path: 'author', model: Users}, function (err, result) {
