@@ -46,10 +46,12 @@ router.post('/register', function (req, res) {
       } else {
         console.log("record", record);
         req.session.authenticated = true;
+        req.session.id = record._id;
         req.session.username = record.username;
         req.session.passwordHash = record.passwordHash;
         res.json({
           success: true,
+          id: req.session.id,
           username: req.session.username,
           passwordHash: req.session.passwordHash
         });
@@ -77,7 +79,7 @@ router.post('/login', function (req, res) {
     // Users.findOne({ username: "me" }, function (err, record) {
     //   if (err) { console.log("err", err); } else { console.log("rec", record); }
     // });
-    Users.findOne({ username: data.username }, 
+    Users.findOne({ username: data.username },
       function (err, record) {
       console.log("finding user");
       console.log(record);
@@ -101,11 +103,13 @@ router.post('/login', function (req, res) {
         if (data.passwordHash === correctPasswordHash) {
           console.log("password was good");
           req.session.authenticated = true;
+          req.session.id = record._id;
           req.session.username = record.username;
           req.session.passwordHash = record.passwordHash;
           console.log("session info:", req.session);
           res.json({
             success: true,
+            id: req.session.id,
             username: req.session.username,
             passwordHash: req.session.passwordHash
           });
@@ -127,6 +131,7 @@ router.post('/login', function (req, res) {
 router.post('/logout', function (req, res) {
   console.log("logging out");
   req.session.authenticated = false;
+  req.session.id = -1;
   req.session.username = "";
   req.session.passwordHash = "";
   res.json({
