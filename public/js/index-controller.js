@@ -8,6 +8,9 @@ var IndexController = function () {
   // Function to be called to render the starting point
   var startingPointRenderer;
 
+  // Function to be called to render the freets
+  var freetRenderer;
+
   // Input field to prompt for username
   var usernamePromptInput;
 
@@ -246,6 +249,23 @@ var IndexController = function () {
    */
   that.renderStartingPoint = function() {
     startingPointRenderer();
+  }
+
+  /**
+   * Registers a function that will render the starting point.
+   *
+   * @param {Function} listener - The function to be called. Function
+   *   must accept no arguments.
+   */
+  that.registerFreetRenderer = function(renderer) {
+    freetRenderer = renderer;
+  }
+
+  /**
+   * Renders the starting point by calling the registered renderer.
+   */
+  that.renderFreets = function() {
+    freetRenderer();
   }
 
   /**

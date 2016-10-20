@@ -5,7 +5,7 @@ var Freets = require('../models/freets');
 
 // Render the homepage
 router.get('/', function (req, res, next) {
-  console.log("rendering homepage from", req.referrer);
+  console.log("rendering homepage");
   res.render('homepage.hbs');
 });
 
@@ -16,27 +16,21 @@ router.get('/favicon.ico', function (req, res, next) {
 // If there is a username, have the navbar display the username
 // Otherwise, have it display the username selector
 router.get('/username', function (req, res) {
-  console.log("getting username");
   if (req.session && req.session.username) {
-    console.log("found username");
-    res.json({ username: req.session.username, username_selector: "username.hbs"});
+    res.json({ id: req.session.id, username: req.session.username, username_selector: "username.hbs"});
   } else {
-    console.log("couldn't find username");
     res.json({ username_selector: "no_username.hbs" });
   }
 });
 
 // Register a new user account
 router.post('/register', function (req, res) {
-  console.log("registering new user");
-  console.log("req url", req.url);
   console.log(req.body);
   // Store the new user
   var user = req.body;
   Users.create({ username: user.username,
                 passwordHash: user.passwordHash }, 
     function (err, record) { 
-      console.log("creating record");
       if (err) {
         console.log(err);
         res.json({
@@ -61,27 +55,21 @@ router.post('/register', function (req, res) {
 
 // Log in a user if they're not already logged in
 router.post('/login', function (req, res) {
-  console.log("received login request");
-  console.log("request", req.body);
   var data = req.body;
-  console.log("session info", req.session);
   // Check that the user isn't logged in
   if (req.session.authenticated) {
-    console.log("user already logged in");
     res.json({
       success: false,
       err: "alreadyLoggedIn",
       message: "User already logged in"
     });
   } else {
-    console.log("logging in");
     // Check that the password is correct
     // Users.findOne({ username: "me" }, function (err, record) {
     //   if (err) { console.log("err", err); } else { console.log("rec", record); }
     // });
     Users.findOne({ username: data.username },
       function (err, record) {
-      console.log("finding user");
       console.log(record);
       if (err) { // error looking for username
         console.log(err);
@@ -90,7 +78,6 @@ router.post('/login', function (req, res) {
           err: err
         });
       } else if (record === null) {
-        console.log("username not in database");
         res.json({
           success: false,
           err: {
@@ -101,12 +88,10 @@ router.post('/login', function (req, res) {
       } else {
         var correctPasswordHash = record.passwordHash;
         if (data.passwordHash === correctPasswordHash) {
-          console.log("password was good");
           req.session.authenticated = true;
           req.session.id = record._id;
           req.session.username = record.username;
           req.session.passwordHash = record.passwordHash;
-          console.log("session info:", req.session);
           res.json({
             success: true,
             id: req.session.id,
@@ -129,7 +114,6 @@ router.post('/login', function (req, res) {
 
 // Log a user out
 router.post('/logout', function (req, res) {
-  console.log("logging out");
   req.session.authenticated = false;
   req.session.id = -1;
   req.session.username = "";
@@ -140,7 +124,6 @@ router.post('/logout', function (req, res) {
 });
 
 router.post('/write-freet', function (req, res) {
-  console.log("writing freet");
   var freetData = req.body;
   Freets.create( {
     author: freetData.authorId,
@@ -157,9 +140,61 @@ router.post('/write-freet', function (req, res) {
         err: err
       });
     } else {
-      res.json({ success: true });
+      res.json({ 
+        success: true,
+        id: record._id,
+        author: req.session.username,
+        content: record.content.text
+      });
     }
   });
 });
+
+router.get('/get-all-freets', function (req, res) {
+  console.log("getting all freets");
+  Freets.populate({ path: 'author' });
+  Freets.find().exec(function (err, freets) {
+    Freets.populate(freets, {path: 'author'}, function (err, result) {
+      console.log("populated");
+      res.json({ freets: freets.map(formatFreets)})
+    })
+  });
+});
+
+var formatFreet = function (freet) {
+  console.log("formatting freets");
+  return {
+      _id: freet._id,
+      author: freet.author.username,
+      isRefreet: freet.content.isRefreet,
+      content: freet.content.text
+    };
+  // if (!freet.isRefreet) {
+  //   return {
+  //     _id: freet._id,
+  //     author: freet.author.username,
+  //     isRefreet: freet.content.isRefreet,
+  //     content: freet.content.text
+  //   };
+  // } else {
+  //   var refreetString;
+  //   Freets.findOne({ _id: freet.refreetId }, function (err, refreeted) {
+  //     if (err) {
+  //       console.log(err);
+  //       refreetString = "Error";
+  //     } else {
+  //       var formattedRefreet = formatFreet(refreeted);
+  //       refreetString = formattedRefreet.author + ": " + formattedRefreet.content;
+  //     }
+  //   });
+
+  //   return {
+  //     _id: freet._id,
+  //     author: freet.author.username,
+  //     isRefreet: freet.content.isRefreet,
+  //     content: refreetString
+  //   }
+  // }
+}
 
 module.exports = router;

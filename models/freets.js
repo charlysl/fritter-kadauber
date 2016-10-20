@@ -1,16 +1,10 @@
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var uniqueValidator = require("mongoose-unique-validator");
-var Users = require('./users.js');
 
 var freetSchema = mongoose.Schema({
-  _id: {
-    type: Number,
-    index: true,
-    unique: true
-  },
   author: { 
-    type: ObjectId, 
+    type: ObjectId,
     ref: 'Users'
   },
   content: {

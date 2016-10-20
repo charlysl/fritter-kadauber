@@ -1,5 +1,10 @@
 var assert = require("assert");
 
+/////////////////////////
+// Note from Meghana: Use supertest agent
+// Agent connects to the server and makes requests for you
+/////////////////////////
+
 // Array is the module under test.
 describe('Array', function() {
   // indexOf is the method under test.

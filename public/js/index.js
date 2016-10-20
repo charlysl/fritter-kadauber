@@ -138,13 +138,34 @@ $(document).ready(function() {
         var freetEntry = Handlebars.templates['enter_freet.hbs'](res);
         $('#starting-point').html(freetEntry);
 
-        // Function to be called when a new freet is created
-        var freetSaver = function(freet) {
-          console.log(freet);
+        // Add a new freet to the DOM
+        var addNewFreet = function(response) {
+          var newFreetHtml = Handlebars.templates['display_freet.hbs'](response);
+          $("#direct-freet-container").prepend(newFreetHtml);
         }
 
-        indexController.registerNewFreetListener(freetSaver);
+        // Function to be called when a new freet is created (NOT a refreet)
+        var writeNewFreet = function() {
+          var text = $("#freet-input").val();
+          // Get the stored id of the current user
+          $.post('/fritter/write-freet', {
+            author: res.id,
+            isRefreet: false,
+            text: text
+          }, function (writeFreetRes) {
+            if (writeFreetRes.success) {
+              addNewFreet(writeFreetRes);
+              $("#freet-input").val(""); // clear input field
+              console.log("success", text);
+            } else {
+              console.log("nope");
+            }
+          });
+        }
+
+        indexController.registerNewFreetListener(writeNewFreet);
         indexController.attachNewFreetListener("starting-point");
+
 
       } else {
 
@@ -158,7 +179,6 @@ $(document).ready(function() {
           "non-unique-user-prompt-message", "non-matching-passwords-prompt-message" // prompt register
         ];
         indexErrorMessageIds.forEach(function (errorMessageId) {
-          console.log("identifying", errorMessageId);
           indexController.identifyErrorMessage(errorMessageId);
         });
         var indexFormGroupIds = [ "username-login-prompt-group", "password-login-prompt-group", // prompt login
@@ -251,15 +271,7 @@ $(document).ready(function() {
 
       }
 
-      // Display the appropriate freets
-      var freetHtml = Handlebars.templates['freet_container.hbs']({});
-      $("#freet-container").html(freetHtml);
-      console.log("displaying freets");
-
-
     });
-
-    
 
   }
 
@@ -267,6 +279,21 @@ $(document).ready(function() {
 
   // Render the starting point
   indexController.renderStartingPoint();
+
+
+  // Display the appropriate freets
+  var renderFreets = function () {
+    $.get('/fritter/get-all-freets', {}, function (res) {
+      var freetHtml = Handlebars.templates['freet_container.hbs'](res);
+      $("#freet-container").html(freetHtml);
+      console.log("displaying freets");
+    });
+  }
+
+  indexController.registerFreetRenderer(renderFreets);
+  // Render the freets
+  indexController.renderFreets();
+
 
   // Update the navbar view to match the current state without reloading the page.
   var updateNavbar = function () {
@@ -302,13 +329,11 @@ $(document).ready(function() {
   var hideErrors = function () {
     // Hide all error messages in index
     indexController.getErrorMessages().forEach(function (message) {
-      console.log("hiding", message.attr('id'));
       message.hide();
     });
 
     // Hide all error messages in navbar
     navbarController.getErrorMessages().forEach(function (message) {
-      console.log("hiding", message.attr('id'));
       message.hide();
     });
 

@@ -1,14 +1,14 @@
-<div class="panel panel-default" id="freet-div-id">
+<div class="panel panel-default" id="freet-div-id-{{ id }}">
   <div class="panel-body">
     <div class="row">
       <div class="col-md-10">
-        <h4>Author: </h4>
-        <p>Content: </p>
+        <h4>{{ author }}</h4>
+        <p>{{ content }}</p>
       </div>
       <div class="col-md-2">
         <div class="pull-right">
-          <button class="btn btn-default " id="refreet-freet-id"><i class="fa fa-retweet" aria-hidden="true"></i></button>
-          <button class="btn btn-default " id="delete-freet-id"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          <button class="btn btn-default " id="refreet-freet-{{ id }}"><i class="fa fa-retweet" aria-hidden="true"></i></button>
+          <button class="btn btn-default " id="delete-freet-{{ id }}"><i class="fa fa-trash" aria-hidden="true"></i></button>
         </div>
       </div
     </div>
