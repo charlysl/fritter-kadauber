@@ -153,10 +153,12 @@ $(document).ready(function() {
         $('#starting-point').html(usernamePrompt);
 
         // Find error message elements and hide them
-        var indexErrorMessageIds = [ "invalid-login-prompt-message", "login-error-prompt-message", "user-not-found-prompt-message", // prompt login
+        var indexErrorMessageIds = [ "invalid-login-prompt-message", "login-error-prompt-message", 
+          "user-not-found-prompt-message", // prompt login
           "non-unique-user-prompt-message", "non-matching-passwords-prompt-message" // prompt register
         ];
         indexErrorMessageIds.forEach(function (errorMessageId) {
+          console.log("identifying", errorMessageId);
           indexController.identifyErrorMessage(errorMessageId);
         });
         var indexFormGroupIds = [ "username-login-prompt-group", "password-login-prompt-group", // prompt login
@@ -231,6 +233,7 @@ $(document).ready(function() {
               if (res.err.name === "BadCredentials") {
                 $("#invalid-login-prompt-message").show();
               } else if (res.err.name === "UserNotFound") {
+                console.log("user not found");
                 $("#user-not-found-prompt-message").show();
               } else {
                 $("#login-error-prompt-message").show();
@@ -299,11 +302,13 @@ $(document).ready(function() {
   var hideErrors = function () {
     // Hide all error messages in index
     indexController.getErrorMessages().forEach(function (message) {
+      console.log("hiding", message.attr('id'));
       message.hide();
     });
 
     // Hide all error messages in navbar
     navbarController.getErrorMessages().forEach(function (message) {
+      console.log("hiding", message.attr('id'));
       message.hide();
     });
 
